@@ -1,6 +1,16 @@
+import { 
+  getCardsApi,
+  getUserApi,
+  profileEditApi,
+  profileEditAvatarApi,
+  addCardApi,
+  addLikeApi,
+  deleteCardApi
+} from './scripts/api.js';
 import { initialCards } from './scripts/cards.js';
 import { createCard, likeCard, deleteCard } from './scripts/card.js';
 import { openModal, closeModal, closeModalOverlay, closeModalBtn } from './scripts/modal.js';
+import { validationConfig, enableValidation, clearValidation } from './scripts/validation.js';
 import './pages/index.css';
 
 const cardsContainer = document.querySelector('.places__list');
@@ -9,11 +19,14 @@ const cardForm = document.forms['new-place'];
 
 const popups = document.querySelectorAll('.popup');
 const profileEditPopup = document.querySelector('.popup_type_edit');
+const avatarEditPopup = document.querySelector('.popup__image');
 const addCardPopup = document.querySelector('.popup_type_new-card');
 const cardImgPopup = document.querySelector('.popup_type_image');
 
 const profileEditBtn = document.querySelector('.profile__edit-button');
+const profileSubmitBtn = profileEditPopup.querySelector('.popup__button');
 const addCardBtn = document.querySelector('.profile__add-button');
+const addCardSubmitBtn = document.querySelector('.popup_type_new-card.popup__button');
 
 const profileName = document.querySelector('.profile__title');
 const profileJob = document.querySelector('.profile__description');
@@ -24,9 +37,14 @@ const cardLink = document.querySelector('.popup__input_type_url');
 const imgPopup = cardImgPopup.querySelector('.popup__image');
 const captionPopup = cardImgPopup.querySelector('.popup__caption');
 
-initialCards.forEach(function (card) {
-  cardsContainer.append(createCard(card, openCardImgPopup, likeCard, deleteCard));
-});
+let userId = null;
+let cardId = null;
+
+function renderCards() {
+  initialCards.forEach((card) => {
+    cardsContainer.append(createCard(userId, card, openCardImgPopup, addLikeApi, deleteCardApi));
+  });
+}
 
 popups.forEach(popup => {
   popup.addEventListener('click', closeModalOverlay);
@@ -43,9 +61,46 @@ profileEditBtn.addEventListener('click', openProfileEditPopup);
 
 function submitProfileEditForm(e) {
   e.preventDefault();
-  profileName.textContent = nameInput.value;
-  profileJob.textContent = jobInput.value;
-  closeModal(profileEditPopup);
+
+  profileSubmitBtn.textContent = 'Сохранение...';
+
+  profileEditApi({
+    name: nameInput.value,
+    about: jobInput.value
+  })
+    .then((data) => {
+      profileName.textContent = data.name;
+      profileJob.textContent = data.about;
+      closeModal(profileEditPopup);
+    })
+    .catch((error) => {
+      console.log('Ошибка, данные пользователя не изменены:', error);
+    })
+    .finally(() => {
+      profileSubmitBtn.textContent = 'Сохранить';
+    });
+}
+
+function submitCardAddForm(e) {
+  e.preventDefault();
+
+  addCardSubmitBtn.textContent = 'Сохранение...';
+
+  const name = cardName.value;
+  const link = cardLink.value;
+
+  addCardApi({ name, link })
+    .then(() => {
+      renderCards();
+      closeModal(addCardPopup);
+      addCardPopup.reset();
+    })
+    .catch((error) => {
+      console.log('Ошибка, карточка не добавлена:', error);
+    })
+    .finally(() => {
+      profileSubmitBtn.textContent = 'Сохранить';
+    });
 }
 
 profileEditForm.addEventListener('submit', submitProfileEditForm);
@@ -62,7 +117,7 @@ function addCard(e) {
     name: cardName.value,
     link: cardLink.value
   }
-  const newCard = createCard(card, openCardImgPopup, likeCard, deleteCard);
+  const newCard = createCard(userId, card, openCardImgPopup, likeCard, deleteCard);
 
   cardsContainer.prepend(newCard);
   closeModal(addCardPopup);
@@ -77,3 +132,20 @@ function openCardImgPopup(card) {
   captionPopup.textContent = card.name;
   openModal(cardImgPopup);
 }
+
+enableValidation(validationConfig);
+
+Promise.all([getUserApi(), getCardsApi()])
+  .then(([userData, initialCards]) => {
+    userId = userData._id;
+    profileName.textContent = userData.name;
+    profileJob.textContent = userData.about;
+    avatarEditPopup.style.backgroundImage = `url(${userData.avatar})`;
+
+    initialCards.forEach((card) => {
+      cardsContainer.append(createCard(userId, card, openCardImgPopup, addLikeApi, deleteCardApi));
+    });
+  })
+  .catch((error) => {
+    console.log('Ошибка, данные пользователя не загружены:', error);
+  });

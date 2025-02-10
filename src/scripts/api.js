@@ -13,33 +13,34 @@ const checkStatus = (response) => {
   return Promise.reject(`Ошибка ${response.status}`);
 };
 
-export const getCards = () => {
+export const getCardsApi = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
     .then(response => { checkStatus(response) });
 };
 
-export const getUser = () => {
+export const getUserApi = () => {
   return fetch(`${config.baseUrl}/users/me`, {
-    headers: config.headers,
+    method: "GET",
+    headers: config.headers
   })
     .then(response => { checkStatus(response) });
 };
 
-export const profileEdit = (name, about) => {
+export const profileEditApi = (data) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: config.headers,
     body: JSON.stringify({
-      name: name,
-      about: about
+      name: data.name,
+      about: data.about
     })
   })
     .then(response => { checkStatus(response) });
 };
 
-export const profileEditAvatar = (avatar) => {
+export const profileEditAvatarApi = (avatar) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
     headers: config.headers,
@@ -50,7 +51,7 @@ export const profileEditAvatar = (avatar) => {
     .then(response => { checkStatus(response) });
 };
 
-export const addCard = (card) => {
+export const addCardApi = (card) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
     headers: config.headers,
@@ -62,7 +63,7 @@ export const addCard = (card) => {
     .then(response => { checkStatus(response) });
 };
 
-export const deleteCard = (cardId) => {
+export const deleteCardApi = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
     headers: config.headers,
@@ -70,7 +71,7 @@ export const deleteCard = (cardId) => {
     .then(response => { checkStatus(response) });
 };
 
-export const addLike = (cardId) => {
+export const addLikeApi = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: 'PUT',
     headers: config.headers,
@@ -78,7 +79,7 @@ export const addLike = (cardId) => {
     .then(response => { checkStatus(response) });
 };
 
-export const deleteLike = (cardId) => {
+export const deleteLikeApi = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers: config.headers,
