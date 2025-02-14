@@ -13,6 +13,19 @@
   padding: 36px 0;
 }
 
+.profile__edit-icon {
+  width: 20px;
+  height: 20px;
+  padding: 52px;
+  opacity: 0;
+}
+
+.profile__edit-icon:hover {
+  background: rgba(0, 0, 0, 0.65);
+  opacity: 1; 
+  cursor: pointer;
+}
+
 @media screen and (max-width: 480px) {
   .profile {
     padding: 43px 0;

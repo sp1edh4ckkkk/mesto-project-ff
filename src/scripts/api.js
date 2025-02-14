@@ -39,12 +39,12 @@ export const profileEditApi = (data) => {
     .then(checkStatus);
 };
 
-export const profileEditAvatarApi = (avatar) => {
+export const profileEditAvatarApi = (data) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
     headers: config.headers,
     body: JSON.stringify({
-      avatar: avatar
+      avatar: data.avatar
     })
   })
     .then(checkStatus);

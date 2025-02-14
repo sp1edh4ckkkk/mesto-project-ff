@@ -1,12 +1,3 @@
-export const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-};
-
 const showError = (form, input, validationConfig) => {
   const error = form.querySelector(`.${input.id}-error`);
   input.classList.add(validationConfig.inputErrorClass);
@@ -74,9 +65,6 @@ export const enableValidation = (validationConfig) => {
   const formList = Array.from(document.querySelectorAll(validationConfig.formSelector));
 
   formList.forEach((form) => {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-    });
     setEventListeners(form, validationConfig);
   });
 }
@@ -86,8 +74,7 @@ export const clearValidation = (form, validationConfig) => {
   const submitBtn = form.querySelector(validationConfig.submitButtonSelector);
 
   inputList.forEach((input) => {
-    input.value = '';
-    hideInputError(form, input, validationConfig);
+    hideError(form, input, validationConfig);
   });
 
   submitBtn.classList.add(validationConfig.inactiveButtonClass);
