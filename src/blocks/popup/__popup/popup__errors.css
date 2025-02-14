@@ -16,3 +16,7 @@
   background: white;
   cursor: default;
 }
+
+.popup__error {
+  color: #F00;
+}

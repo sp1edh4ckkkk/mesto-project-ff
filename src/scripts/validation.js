@@ -42,13 +42,19 @@ const inputIsValid = (form, input, validationConfig) => {
   }
 }
 
+const hasInvalidInput = (inputList) => {
+  return inputList.some((input) => {
+    return !input.validity.valid;
+  });
+}
+
 const changeBtn = (inputList, submitBtn, validationConfig) => {
-  if (inputList.some((input) => input.validity.valid )) {
-    submitBtn.classList.remove(validationConfig.inactiveButtonClass);
-    submitBtn.disabled = false;
-  } else {
+  if (hasInvalidInput(inputList)) {
     submitBtn.classList.add(validationConfig.inactiveButtonClass);
     submitBtn.disabled = true;
+  } else {
+    submitBtn.classList.remove(validationConfig.inactiveButtonClass);
+    submitBtn.disabled = false;
   }
 }
 

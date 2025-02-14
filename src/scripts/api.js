@@ -17,15 +17,14 @@ export const getCardsApi = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
-    .then(response => { checkStatus(response) });
+    .then(checkStatus);
 };
 
 export const getUserApi = () => {
   return fetch(`${config.baseUrl}/users/me`, {
-    method: "GET",
     headers: config.headers
   })
-    .then(response => { checkStatus(response) });
+    .then(checkStatus);
 };
 
 export const profileEditApi = (data) => {
@@ -37,7 +36,7 @@ export const profileEditApi = (data) => {
       about: data.about
     })
   })
-    .then(response => { checkStatus(response) });
+    .then(checkStatus);
 };
 
 export const profileEditAvatarApi = (avatar) => {
@@ -48,7 +47,7 @@ export const profileEditAvatarApi = (avatar) => {
       avatar: avatar
     })
   })
-    .then(response => { checkStatus(response) });
+    .then(checkStatus);
 };
 
 export const addCardApi = (card) => {
@@ -60,7 +59,7 @@ export const addCardApi = (card) => {
       link: card.link
     })
   })
-    .then(response => { checkStatus(response) });
+    .then(checkStatus);
 };
 
 export const deleteCardApi = (cardId) => {
@@ -68,7 +67,7 @@ export const deleteCardApi = (cardId) => {
     method: 'DELETE',
     headers: config.headers,
   })
-    .then(response => { checkStatus(response) });
+    .then(checkStatus);
 };
 
 export const addLikeApi = (cardId) => {
@@ -76,7 +75,7 @@ export const addLikeApi = (cardId) => {
     method: 'PUT',
     headers: config.headers,
   })
-    .then(response => { checkStatus(response) });
+    .then(checkStatus);
 };
 
 export const deleteLikeApi = (cardId) => {
@@ -84,5 +83,5 @@ export const deleteLikeApi = (cardId) => {
     method: 'DELETE',
     headers: config.headers,
   })
-    .then(response => { checkStatus(response) });
+    .then(checkStatus);
 };

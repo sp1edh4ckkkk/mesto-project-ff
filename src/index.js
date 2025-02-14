@@ -26,7 +26,7 @@ const cardImgPopup = document.querySelector('.popup_type_image');
 const profileEditBtn = document.querySelector('.profile__edit-button');
 const profileSubmitBtn = profileEditPopup.querySelector('.popup__button');
 const addCardBtn = document.querySelector('.profile__add-button');
-const addCardSubmitBtn = document.querySelector('.popup_type_new-card.popup__button');
+const addCardSubmitBtn = addCardPopup.querySelector('.popup__button');
 
 const profileName = document.querySelector('.profile__title');
 const profileJob = document.querySelector('.profile__description');
@@ -42,7 +42,7 @@ let cardId = null;
 
 function renderCards() {
   initialCards.forEach((card) => {
-    cardsContainer.append(createCard(userId, card, openCardImgPopup, addLikeApi, deleteCardApi));
+    cardsContainer.append(createCard(card, userId, openCardImgPopup, addLikeApi, deleteCardApi));
   });
 }
 
@@ -81,6 +81,8 @@ function submitProfileEditForm(e) {
     });
 }
 
+profileEditForm.addEventListener('submit', submitProfileEditForm);
+
 function submitCardAddForm(e) {
   e.preventDefault();
 
@@ -88,10 +90,11 @@ function submitCardAddForm(e) {
 
   const name = cardName.value;
   const link = cardLink.value;
+  addCardSubmitBtn.classList.add('.popup__button_disabled');
 
   addCardApi({ name, link })
-    .then(() => {
-      renderCards();
+    .then((card) => {
+      renderCards(card);
       closeModal(addCardPopup);
       addCardPopup.reset();
     })
@@ -103,28 +106,11 @@ function submitCardAddForm(e) {
     });
 }
 
-profileEditForm.addEventListener('submit', submitProfileEditForm);
-
-function openAddCardPopup() {
+addCardBtn.addEventListener('click', () => {
+  // clearValidation();
   openModal(addCardPopup);
-}
-
-addCardBtn.addEventListener('click', openAddCardPopup);
-
-function addCard(e) {
-  e.preventDefault();
-  const card = {
-    name: cardName.value,
-    link: cardLink.value
-  }
-  const newCard = createCard(userId, card, openCardImgPopup, likeCard, deleteCard);
-
-  cardsContainer.prepend(newCard);
-  closeModal(addCardPopup);
-  cardForm.reset();
-}
-
-cardForm.addEventListener('submit', addCard);
+});
+cardForm.addEventListener('submit', submitCardAddForm);
 
 function openCardImgPopup(card) {
   imgPopup.src = card.link;
@@ -143,9 +129,9 @@ Promise.all([getUserApi(), getCardsApi()])
     avatarEditPopup.style.backgroundImage = `url(${userData.avatar})`;
 
     initialCards.forEach((card) => {
-      cardsContainer.append(createCard(userId, card, openCardImgPopup, addLikeApi, deleteCardApi));
+      cardsContainer.prepend(createCard(card, userId, openCardImgPopup, addLikeApi, deleteCardApi));
     });
   })
   .catch((error) => {
-    console.log('Ошибка, данные пользователя не загружены:', error);
+    console.log('Ошибка, данные не загружены:', error);
   });
