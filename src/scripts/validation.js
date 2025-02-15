@@ -77,6 +77,5 @@ export const clearValidation = (form, validationConfig) => {
     hideError(form, input, validationConfig);
   });
 
-  submitBtn.classList.add(validationConfig.inactiveButtonClass);
   submitBtn.disabled = true;
 }

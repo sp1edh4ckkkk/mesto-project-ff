@@ -20,6 +20,7 @@ const profileEditBtn = document.querySelector('.profile__edit-button');
 const profileSubmitBtn = profileEditPopup.querySelector('.popup__button');
 const addCardBtn = document.querySelector('.profile__add-button');
 const addCardSubmitBtn = addCardPopup.querySelector('.popup__button');
+const avatarSubmitBtn = avatarPopup.querySelector('.popup__button');
 
 const profileName = document.querySelector('.profile__title');
 const profileJob = document.querySelector('.profile__description');
@@ -48,7 +49,7 @@ function renderCards(card) {
 
 popups.forEach(popup => {
   popup.addEventListener('click', closeModalOverlay);
-  popup.querySelector('.popup__close').addEventListener('click', closeModalBtn);
+  popup.querySelector('.popup__close').addEventListener('click', () => closeModal(popup));
 });
 
 function openCardImgPopup(link, name) {
@@ -64,7 +65,10 @@ function openProfileEditPopup() {
   openModal(profileEditPopup);
 }
 
-profileEditBtn.addEventListener('click', openProfileEditPopup);
+profileEditBtn.addEventListener('click', () => {
+  clearValidation(profileEditForm, validationConfig);
+  openProfileEditPopup();
+});
 
 function submitProfileEditForm(e) {
   e.preventDefault();
@@ -109,7 +113,7 @@ function submitCardAddForm(e) {
       console.log('Ошибка, карточка не добавлена:', error);
     })
     .finally(() => {
-      profileSubmitBtn.textContent = 'Сохранить';
+      addCardSubmitBtn.textContent = 'Сохранить';
     });
 }
 
@@ -122,6 +126,9 @@ cardForm.addEventListener('submit', submitCardAddForm);
 function submitAvatarForm(e) {
   e.preventDefault();
 
+  avatarSubmitBtn.textContent = 'Сохранение...';
+  avatarSubmitBtn.classList.add('.popup__button_disabled');
+
   profileEditAvatarApi({
     avatar: avatarInputPopup.value
   })
@@ -131,6 +138,9 @@ function submitAvatarForm(e) {
     })
     .catch((error) => {
       console.log('Ошибка, аватар не обновлён:', error);
+    })
+    .finally(() => {
+      avatarSubmitBtn.textContent = 'Сохранить';
     });
 }
 
@@ -140,9 +150,6 @@ profileImage.addEventListener('click', () => {
   avatarForm.reset();
   openModal(avatarPopup);
 });
-
-
-
 
 Promise.all([getUserApi(), getCardsApi()])
   .then(([userData, initialCards]) => {
